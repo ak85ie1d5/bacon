@@ -1,4 +1,4 @@
-#/usr/bin/env python3
+#/usr/bin/env python2.7
 import argparse
 import subprocess
 import os
@@ -20,12 +20,10 @@ args = parser.parse_args()
 pwd = os.environ["PWD"]
 current_date = datetime.now().strftime('%Y-%m-%d')
 
-
-
 # Run the backups
 for site_name, site_info in config.domains.items():
 
-    filename = f"{site_name}-{current_date}"
+    filename = "{}-{}".format(site_name, current_date)
 
     if args.runlevel == None or args.runlevel == 1:
         # Backup the database

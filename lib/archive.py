@@ -21,52 +21,52 @@ class archive:
         try:
             with open(filename + '.sql', 'w') as backup_file:
                 subprocess.run(command, stdout=backup_file, check=True)
-            nextcloud.notification(f"Dump {filename}.sql: OK.")
+            nextcloud.notification("Dump {}.sql: OK.".format(filename))
         except subprocess.CalledProcessError as e:
-            nextcloud.notification(f"Erreur lors de la sauvegarde de {filename}.sql: {e}")
+            nextcloud.notification("Erreur lors de la sauvegarde de {}.sql: {}".format(filename, e))
 
     @staticmethod
     def files(site_info, filename):
         try:
             with tarfile.open(filename+'.tar.gz', 'w:gz') as archive_file:
                 archive_file.add(site_info['file_path'], arcname=filename)
-            nextcloud.notification(f"Archive {filename}.tar.gz: OK.")
+            nextcloud.notification("Archive {}.tar.gz: OK.".format(filename))
         except Exception as e:
-            nextcloud.notification(f"Une erreur s'est produite : {e}")
+            nextcloud.notification("Une erreur s'est produite : {}".format(e))
 
     @staticmethod
     def delete(site_name, extension):
         current_date = datetime.now()
         previous_date = current_date - timedelta(days=1)
         formatted_previous_date = previous_date.strftime('%Y-%m-%d')
-        filename = f"{site_name}-{formatted_previous_date}.{extension}"
+        filename = "{}-{}.{}".format(site_name, formatted_previous_date, extension)
 
         if os.path.exists(filename):
             os.remove(filename)
-            nextcloud.notification(f"Deleted {filename}: OK")
+            nextcloud.notification("Deleted {}: OK".format(filename))
         else:
-            nextcloud.notification(f"{filename} does not exist")
+            nextcloud.notification("{} does not exist".format(filename))
 
     @staticmethod
     def delete_remotely(site_name):
         current_date = datetime.now()
         previous_date = current_date - timedelta(days=8)
         formatted_previous_date = previous_date.strftime('%Y-%m-%d')
-        filename = f"{site_name}-{formatted_previous_date}.*"
-        remote_path = f"{config.ssh_path}{filename}"
+        filename = "{}-{}.*".format(site_name, formatted_previous_date)
+        remote_path = "{}{}".format(config.ssh_path, filename)
 
         # Command to list files
-        command_ls = f'ssh {config.ssh_username}@{config.ssh_hostname} "ls {remote_path}"'
+        command_ls = 'ssh {}@{} "ls {}"'.format(config.ssh_username, config.ssh_hostname, remote_path)
 
         try:
             result = subprocess.run(command_ls, shell=True)
 
             if result.returncode == 0:
                 # Files exist, proceed to delete
-                command_rm = f'ssh {config.ssh_username}@{config.ssh_hostname} "rm {remote_path}"'
+                command_rm = 'ssh {}@{} "rm {}"'.format(config.ssh_username, config.ssh_hostname, remote_path)
                 subprocess.run(command_rm, shell=True, check=True)
-                nextcloud.notification(f"Delete remotely {remote_path}: OK.")
+                nextcloud.notification("Delete remotely {}: OK.".format(remote_path))
             else:
-                nextcloud.notification(f"No files to delete for {filename}.")
+                nextcloud.notification("No files to delete for {}.".format(filename))
         except subprocess.CalledProcessError as e:
-            nextcloud.notification(f"Error checking or deleting files: {e}")
+            nextcloud.notification("Error checking or deleting files: {}".format(e))

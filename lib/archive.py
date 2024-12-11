@@ -20,7 +20,7 @@ class archive:
 
         try:
             with open(filename + '.sql', 'w') as backup_file:
-                subprocess.run(command, stdout=backup_file, check=True)
+                subprocess.call(command, stdout=backup_file, check=True)
             nextcloud.notification("Dump {}.sql: OK.".format(filename))
         except subprocess.CalledProcessError as e:
             nextcloud.notification("Erreur lors de la sauvegarde de {}.sql: {}".format(filename, e))
@@ -56,15 +56,15 @@ class archive:
         remote_path = "{}{}".format(config.ssh_path, filename)
 
         # Command to list files
-        command_ls = 'ssh {}@{} "ls {}"'.format(config.ssh_username, config.ssh_hostname, remote_path)
+        command_ls = 'ssh -p {} {}@{} "ls {}"'.format(config.ssh_port, config.ssh_username, config.ssh_hostname, remote_path)
 
         try:
-            result = subprocess.run(command_ls, shell=True)
+            result = subprocess.call(command_ls, shell=True)
 
             if result.returncode == 0:
                 # Files exist, proceed to delete
-                command_rm = 'ssh {}@{} "rm {}"'.format(config.ssh_username, config.ssh_hostname, remote_path)
-                subprocess.run(command_rm, shell=True, check=True)
+                command_rm = 'ssh -p {} {}@{} "rm {}"'.format(config.ssh_port, config.ssh_username, config.ssh_hostname, remote_path)
+                subprocess.call(command_rm, shell=True)
                 nextcloud.notification("Delete remotely {}: OK.".format(remote_path))
             else:
                 nextcloud.notification("No files to delete for {}.".format(filename))

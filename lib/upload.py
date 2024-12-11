@@ -10,7 +10,7 @@ class upload:
     def rsync(filename, extension):
         pwd = os.environ["PWD"]
 
-        commande_rsync = f'rsync -avz --progress --partial {pwd}/{filename}.{extension} {config.ssh_username}@{config.ssh_hostname}:{config.ssh_path}'
+        commande_rsync = f'rsync -av -e "ssh -p {config.ssh_port}" {pwd}/{filename}.{extension} {config.ssh_username}@{config.ssh_hostname}:{config.ssh_path}'
         result = subprocess.call(commande_rsync, shell=True)
 
         nextcloud.notification(f'Upload {filename}.{extension} status: {result}')

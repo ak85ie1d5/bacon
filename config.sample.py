@@ -17,6 +17,7 @@ domains = {
 ssh_hostname = ""
 ssh_username = ""
 ssh_path = ""
+ssh_port= "22"
 
 # Nextcloud Talk credentials
 nc_url = ''

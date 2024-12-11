@@ -56,14 +56,14 @@ class archive:
         remote_path = f"{config.ssh_path}{filename}"
 
         # Command to list files
-        command_ls = f'ssh {config.ssh_username}@{config.ssh_hostname} "ls {remote_path}"'
+        command_ls = f'ssh -p {config.ssh_port} {config.ssh_username}@{config.ssh_hostname} "ls {remote_path}"'
 
         try:
             result = subprocess.run(command_ls, shell=True)
 
             if result.returncode == 0:
                 # Files exist, proceed to delete
-                command_rm = f'ssh {config.ssh_username}@{config.ssh_hostname} "rm {remote_path}"'
+                command_rm = f'ssh -p {config.ssh_port} {config.ssh_username}@{config.ssh_hostname} "rm {remote_path}"'
                 subprocess.run(command_rm, shell=True, check=True)
                 nextcloud.notification(f"Delete remotely {remote_path}: OK.")
             else:

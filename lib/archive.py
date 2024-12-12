@@ -20,7 +20,7 @@ class archive:
 
         try:
             with open(filename + '.sql', 'w') as backup_file:
-                subprocess.call(command, stdout=backup_file, check=True)
+                subprocess.call(command, stdout=backup_file)
             nextcloud.notification("Dump {}.sql: OK.".format(filename))
         except subprocess.CalledProcessError as e:
             nextcloud.notification("Erreur lors de la sauvegarde de {}.sql: {}".format(filename, e))
@@ -61,7 +61,7 @@ class archive:
         try:
             result = subprocess.call(command_ls, shell=True)
 
-            if result.returncode == 0:
+            if result == 0:
                 # Files exist, proceed to delete
                 command_rm = 'ssh -p {} {}@{} "rm {}"'.format(config.ssh_port, config.ssh_username, config.ssh_hostname, remote_path)
                 subprocess.call(command_rm, shell=True)

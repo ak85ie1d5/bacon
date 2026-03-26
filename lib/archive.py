@@ -11,7 +11,9 @@ class archive:
     def database(site_info, filename):
 
         command = [
-            'mysqldump',
+            'mariadb-dump',
+            '--single-transaction',
+            '--quick',
             '--host=' + site_info['db_hostname'],
             '--user=' + site_info['db_username'],
             '--password=' + site_info['db_password'],
